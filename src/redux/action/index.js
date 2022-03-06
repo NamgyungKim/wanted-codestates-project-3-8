@@ -9,6 +9,7 @@ export const DELETE_MESSAGE = 'DELETE_MESSAGE';
 export const GET_DATA = 'GET_DATA';
 export const NOTIFY = 'NOTIFY';
 export const GET_PAGEDATA = 'GET_PAGEDATA';
+export const TURN_OFF_OBSERVE = 'TURN_OFF_OBSERVE';
 
 export const savePlaceItem = item => {
   const placeItems = getItems('placeItems') || [];
@@ -47,12 +48,22 @@ export const deletePlaceItem = removedIdx => {
   };
 };
 
-export const getDataFromApi = async pageCount => {
+export const getDataFromApi = async (pageCount, isLoaded) => {
+  console.log('데이터 요청중');
   const data = await getData(pageCount);
 
   if (data.result === 'error') {
     alert('너무 많이 데이터를 요청했습니다.');
     return;
+  }
+  if (data.result === 'error2') {
+    alert('더이상 불러온 데이터가 없습니다.');
+    return {
+      type: TURN_OFF_OBSERVE,
+      payload: {
+        isLoaded: false,
+      }
+    }
   }
   const filtered = data.body.map(item => {
     return {
@@ -63,7 +74,10 @@ export const getDataFromApi = async pageCount => {
   });
   return {
     type: GET_DATA,
-    payload: filtered,
+    payload: {
+      data: filtered,
+      isLoaded,
+    },
   };
 };
 

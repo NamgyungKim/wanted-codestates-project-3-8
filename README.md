@@ -14,13 +14,13 @@ $ npm run start
 
 ## 😎 3팀
 
-- 이산하 : 무한 스크롤 구현(Throttle), 배포, (팀장)
+- 이산하 : 무한 스크롤 구현, 배포, (팀장)
 - 김경봉 : Redux 관리, 데이터 CRUD
 - 김남경 : styled-components 구조, (페이지,컴포넌트,라우터) 구현
 - 김형욱 : 무한 스크롤 구현, 검색 기능 구현
 - 노학민 : 검색 debounce, 메시지 피드백 기능
 - 도지현 : Redux 관리, 데이터 CRUD
-- 양윤성 : Redux 관리, API 조회, CORS 이슈 해결
+- 양윤성 : 무한 스크롤 구현, Redux 관리, API 조회, CORS 이슈 해결, 배포
 
 ## 🎇사용 기술스택
 
@@ -35,11 +35,11 @@ $ npm run start
 
 ### API 호출 & 무한 스크롤
 
-![api호출_무한스크롤](https://user-images.githubusercontent.com/82519180/156702519-7a6fa0c7-3a15-40b0-ac25-214584e60d3b.gif)
+![api호출_무한스크롤](https://images.velog.io/images/yunsungyang-omc/post/fe45840a-2148-48cf-a9f0-854e70b26e20/Mar-06-2022%2023-57-26.gif)
 
 - axios를 사용해 데이터를 가져왔습니다.
   
-- API 호출 최적화(Throttle): 무한 스크롤 구현시 스크롤 이벤트로 구현을 했는데 스크롤을 내릴 때 마다 api호출을 요청이 되는 문제점이 발생했습니다. Throttle 기능을 구현해서 api 호출 요청을 줄였습니다.
+- API 호출 최적화(intersection observer): Intersection observer를 이용해서 무한스크롤을 구현했습니다. scroll 이벤트를 통한 방법보다 api 호출 회수를 효율적으로 최적화할 수 있었습니다. 
 
 ### 선택한 장소 저장기능
 

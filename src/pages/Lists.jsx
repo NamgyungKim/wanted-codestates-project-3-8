@@ -1,46 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import DataList from '../components/DataList';
 import { IoIosArrowBack } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDataFromApi, getPageData } from '../redux/action';
+import useIntersect from '../utils/useIntersect';
 
 const Lists = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { apiData } = useSelector(state => ({
+  const { apiData, isLoaded, pageCount } = useSelector(state => ({
     apiData: state.apiData.data,
+    isLoaded: state.apiData.isLoaded,
+    pageCount: state.pageReducer.pageCount,
   }));
-  const { pageCount } = useSelector(state => state.pageReducer);
+
+  const page = useRef(pageCount);
 
   useEffect(() => {
-    dispatch(getDataFromApi(pageCount));
-    dispatch(getPageData(pageCount));
+    dispatch(getDataFromApi(pageCount, true));
+    dispatch(getPageData(page.current));
   }, []);
 
-  const throttle = (callback, delay) => {
-    let timer = null;
-    return arg => {
-      if (timer === null) {
-        timer = setTimeout(() => {
-          callback(arg);
-          timer = null;
-        }, delay);
-      }
-    };
-  };
-
-  const scroll = e => {
-    if (document.body.offsetHeight < e.target.scrollTop + 700) {
-      dispatch(getDataFromApi(pageCount));
-      dispatch(getPageData(pageCount));
-    }
-  };
+  const [_, setRef] = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    await dispatch(getPageData(page.current++));
+    await dispatch(getDataFromApi(page.current, true));
+    observer.observe(entry.target);
+  }, {});
 
   return (
-    <Wrap onScroll={throttle(scroll, 400)}>
+    <Wrap>
       <Nav>
         <IoIosArrowBack size={24} onClick={() => navigate('/')} />
         <h2>데이터 목록</h2>
@@ -58,6 +50,7 @@ const Lists = () => {
           );
         })}
       </ul>
+      {isLoaded && <p ref={setRef}>Loading...</p>}
     </Wrap>
   );
 };
@@ -89,8 +82,11 @@ const Nav = styled.nav`
 const Wrap = styled.div`
   max-width: 428px;
   margin: 20px auto;
-  max-height: 900px;
-  overflow-y: scroll;
+  height: 700px;
+  p {
+    width: 100%;
+    text-align: center;
+  }
 `;
 
 export default Lists;

@@ -9,7 +9,6 @@ const SearchBar = ({
   setSearchContent,
   options = { name: '이름', address: '주소', message: '메모' },
 }) => {
-  // select option인 searchTheme와 input 검색 결과값인 searchContent 상태 설정
   return (
     <Box>
       <Select
